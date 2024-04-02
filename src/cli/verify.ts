@@ -163,7 +163,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
 
     const sel = await selectCompile(ui, localArgs);
 
-    const networkProvider = await createNetworkProvider(ui, localArgs, context.config, false);
+    const networkProvider = await createNetworkProvider(ui, localArgs, context.config, true);
 
     const sender = networkProvider.sender();
 
@@ -173,9 +173,6 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
     }
 
     const network = networkProvider.network();
-    if (network === 'custom') {
-        throw new Error('Cannot use custom network');
-    }
 
     const result = await doCompile(sel.name);
     const resHash = result.code.hash();
@@ -274,7 +271,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
         'blob',
     );
 
-    const backend = backends[network];
+    const backend = backends[network == 'testnet' ? network : 'mainnet'];
 
     const verifierRegistry = networkProvider.open(new VerifierRegistry(backend.verifierRegistry));
 
